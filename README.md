@@ -6,6 +6,8 @@ Predict SLA for multiple dependencies. This tool can help you predict it SLA bef
 * Your App will allow user store many documents in it, you want to estimate the SLA of all documents' size for one user based on: 1) the SLA of how many documents each user own, 2) the SLA of single document's size.
 
 ## Usage
+TODO (gzc9047): finish usage part and the rest of this README.md
+
 SLA in this project means collection of probability and values. This is a SLA example (SLA_A.txt), first column means the probability of value no more than the second column (it is sample of CDF, cumulative distribution function).
 ```
 0.1 1 // 10% items no more than 1
