@@ -3,11 +3,9 @@
 Predict SLA for multiple dependencies. This tool can help you predict it SLA before your make design decision and write the real code. Like:
 
 * Your code calls multiple APIs sequentially (or concurrently), you want to estimate the SLA of its latency based on these APIs latency.
-* Your App will allow user store many documents in it, you want to estimate the SLA of all documents' size for one user based on: 1) the SLA of how many documents each user own, 2) the SLA of single document's size.
+* Your App will allow user store many documents in it, you want to estimate the SLA of all documents' size for one user based on: 1) the SLA of how many documents each user own, 2) the SLA of single document's size. `This use case is not supported now. For now I use Shell and AWK script, to implement this kind function I need design it carefully to make sure it use the right way. TODO (louix): implement it.`
 
 ## Usage
-TODO (gzc9047): finish usage part and the rest of this README.md
-
 SLA in this project means collection of probability and values. This is a SLA example (SLA_A.txt), first column means the probability of value no more than the second column (it is sample of CDF, cumulative distribution function).
 ```
 0.1 1 // 10% items no more than 1
@@ -101,6 +99,29 @@ It will show:
 ```
 
 ## Limitation
+* Input: This tool assume (do not means it have check for these item) that SLA content format is:
+ * First column is probability, second column is SLA value.
+ * SLA value is incremental with the probability.
+ * There are not item have the same probability.
+ * There is always a item have 1 as the probability.
+* Output:
+ * SLA probability and value have at most 18 digitals after radix point.
+ * SLA probability and value do not use round to make it easier to read.
+ * Default output probability list is 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 0.95 0.99 0.999 0.9999 1.
+ * If your input SLA is exponentially distributed (or near), the value of SLA result will be larger then the real one but near.
+
 
 ## Internal detail
+How I implement it? Simulation:
+
+* 1) Extend the input SLA to be more elaborate.
+ * For example if input SLA have “0.1 1” and “0.2 3”, then this tool will generate several SLA item like “0.1 1” “0.01 1.2” “0.01 1.4” “0.01 1.6” … “0.01 3”. These means 10% of the value are 1, 1% values are 1.2 … 1% values are 3. This is linear estimation, if your input SLA is exponentially distributed (or near), these values are larger than the real one.
+ * Result will be better if your input is more elaborate, because there will be less error between the real one than my tool’s estimation.
+* 2) Then calculate the probability of UserFunction(Ai, Bj).
+ * If input are SLA A & SLA B, Ai, Bj are some special values), UserFunction may be add, max or min.
+ * Probability result is P(Ai) * P(Bj).
+ * The second example in the introduction will be complex here because we cannot just multiply them. Like 1% user have 10 documents, and 1% documents’ size is 1MB, the result is not 0.01% with 10MB. It should calculate the special SLA (or call it probability distribution) for the size of 10 documents (this part is one kind of first example, just consider is as we call an API 10 times sequencially, what is the SLA of latency), and do this process for every number of document’s probability. I think this way is a little complex that Shell and AWK are not up to this job.
+* 3) Accumulate the probability of result, give the SLA.
+ * Sort the step 2’s result with descending order and value with ascending order.
+ * Accumulate the probability and output the value once we reach a output flag (0.1 0.2 0 … 0.9999 1)
 
