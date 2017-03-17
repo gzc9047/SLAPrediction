@@ -3,7 +3,7 @@
 Predict SLA for multiple dependencies. This tool can help you predict it SLA before your make design decision and write the real code. Like:
 
 * Your code calls multiple APIs sequentially (or concurrently), you want to estimate the SLA of its latency based on these APIs latency.
-* Your App will allow user store many documents in it, you want to estimate the SLA of all documents' size for one user based on: 1) the SLA of how many documents each user own, 2) the SLA of single document's size. `This use case is not supported now. For now I use Shell and AWK script, to implement this kind function I need design it carefully to make sure it use the right way. TODO (louix): implement it.`
+* Your App will allow user store many documents in it, you want to estimate the SLA of all documents' size for one user based on: 1) the SLA of how many documents each user own, 2) the SLA of one users' all documents size. `This use case is supported now. But the formula is not perfect, use it carefully. TODO (louix): improve it.`
 
 ## Usage
 SLA in this project means collection of probability and values. This is a SLA example (SLA_A.txt), first column means the probability of value no more than the second column (it is sample of CDF, cumulative distribution function).
@@ -96,6 +96,25 @@ It will show:
 0.999006	4.5999999999999996
 0.9999	5.0000000000000000
 1	7.0000000000000000
+```
+
+
+### SLA of multiply(A, B)
+If you want to predict the entire size of one user's documents, A means document number, and B means document size, run this command in shell:
+`merge_general.sh merge_multiply.awk SLA_A.txt SLA_B.txt`
+
+It will show:
+```
+0.1004	3.120000
+0.2028	4.000000
+0.3004	4.800000
+0.4014	5.520000
+0.5013	6.400000
+0.900059	12.920000
+0.990031	21.460000
+0.999002	31.960000
+0.999901	44.000000
+1	119.000000
 ```
 
 ## Limitation
