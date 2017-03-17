@@ -1,0 +1,7 @@
+0.1 1 // 10% items no more than 1
+0.5 2
+0.9 3
+0.99 4
+0.999 5
+0.9999 6
+1 7 // All items no more than 7

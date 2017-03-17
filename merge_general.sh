@@ -42,7 +42,7 @@ cat $part1 \
     | gawk -f $1 \
     | sort -k2n -k1nr > $merge
     
-for i in 0.5 0.9 0.99 0.999 0.9999 1
+for i in 0.1 0.2 0.3 0.4 0.5 0.9 0.99 0.999 0.9999 1
 do
     gawk '{
         p += $1;
