@@ -32,7 +32,7 @@ We can image that SLA_A.txt and SLA_B.txt show the latency of service A and B.
 
 ### SLA of A + B
 If you want to predict the latency of A + B (means call A synchronously until it finish, than call B and wait until it returns), run this command in shell:
-`merge_general.sh merge_add.awk SLA_A.txt SLA_B.txt`
+`merge_general.sh merge_sequence.awk SLA_A.txt SLA_B.txt`
 
 It will show this as result:
 ```
